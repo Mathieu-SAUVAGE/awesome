@@ -45,7 +45,7 @@ end
 beautiful.init("/usr/share/awesome/themes/default/theme.lua")
 
 -- This is used later as the default terminal and editor to run.
-terminal = "xterm"
+terminal = os.getenv("TERMINAL") or "lilyterm" or "xterm"
 editor = os.getenv("EDITOR") or "vim" or "vi" or "nano"
 
 -- Default modkey.
