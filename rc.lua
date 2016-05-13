@@ -10,6 +10,7 @@ local beautiful = require("beautiful")
 -- Notification library
 local naughty = require("naughty")
 local menubar = require("menubar")
+local mice = require("mice/generic")
 
 -- {{{ Error handling
 -- Check if awesome encountered an error during startup and fell back to
@@ -115,14 +116,14 @@ mywibox = {}
 mypromptbox = {}
 mylayoutbox = {}
 mytaglist = {}
-mytaglist.buttons = awful.util.table.join(awful.button({}, 1, awful.tag.viewonly),
-	awful.button({ modkey }, 1, awful.client.movetotag),
-	awful.button({}, 3, awful.tag.viewtoggle),
-	awful.button({ modkey }, 3, awful.client.toggletag),
-	awful.button({}, 4, function(t) awful.tag.viewnext(awful.tag.getscreen(t)) end),
-	awful.button({}, 5, function(t) awful.tag.viewprev(awful.tag.getscreen(t)) end))
+mytaglist.buttons = awful.util.table.join(awful.button({}, mice.button.left, awful.tag.viewonly),
+	awful.button({ modkey }, mice.button.left, awful.client.movetotag),
+	awful.button({}, mice.button.right, awful.tag.viewtoggle),
+	awful.button({ modkey }, mice.button.right, awful.client.toggletag),
+	awful.button({}, mice.wheel.up, function(t) awful.tag.viewnext(awful.tag.getscreen(t)) end),
+	awful.button({}, mice.wheel.down, function(t) awful.tag.viewprev(awful.tag.getscreen(t)) end))
 mytasklist = {}
-mytasklist.buttons = awful.util.table.join(awful.button({}, 1, function(c)
+mytasklist.buttons = awful.util.table.join(awful.button({}, mice.button.left, function(c)
 	if c == client.focus then
 		c.minimized = true
 	else
@@ -138,7 +139,7 @@ mytasklist.buttons = awful.util.table.join(awful.button({}, 1, function(c)
 		c:raise()
 	end
 end),
-	awful.button({}, 3, function()
+	awful.button({}, mice.button.right, function()
 		if instance then
 			instance:hide()
 			instance = nil
@@ -148,11 +149,11 @@ end),
 			})
 		end
 	end),
-	awful.button({}, 4, function()
+	awful.button({}, mice.wheel.up, function()
 		awful.client.focus.byidx(1)
 		if client.focus then client.focus:raise() end
 	end),
-	awful.button({}, 5, function()
+	awful.button({}, mice.wheel.down, function()
 		awful.client.focus.byidx(-1)
 		if client.focus then client.focus:raise() end
 	end))
@@ -167,10 +168,10 @@ for s = 1, screen.count() do
 	-- Create an imagebox widget which will contains an icon indicating which layout we're using.
 	-- We need one layoutbox per screen.
 	mylayoutbox[s] = awful.widget.layoutbox(s)
-	mylayoutbox[s]:buttons(awful.util.table.join(awful.button({}, 1, function() awful.layout.inc(layouts, 1) end),
-		awful.button({}, 3, function() awful.layout.inc(layouts, -1) end),
-		awful.button({}, 4, function() awful.layout.inc(layouts, 1) end),
-		awful.button({}, 5, function() awful.layout.inc(layouts, -1) end)))
+	mylayoutbox[s]:buttons(awful.util.table.join(awful.button({}, mice.button.left, function() awful.layout.inc(layouts, 1) end),
+		awful.button({}, mice.button.right, function() awful.layout.inc(layouts, -1) end),
+		awful.button({}, mice.wheel.up, function() awful.layout.inc(layouts, 1) end),
+		awful.button({}, mice.wheel.down, function() awful.layout.inc(layouts, -1) end)))
 	-- Create a taglist widget
 	mytaglist[s] = awful.widget.taglist(s, awful.widget.taglist.filter.all, mytaglist.buttons)
 
@@ -203,9 +204,9 @@ end
 -- }}}
 
 -- {{{ Mouse bindings
-root.buttons(awful.util.table.join(awful.button({}, 3, function() mymainmenu:toggle() end),
-	awful.button({}, 4, awful.tag.viewnext),
-	awful.button({}, 5, awful.tag.viewprev)))
+root.buttons(awful.util.table.join(awful.button({}, mice.button.right, function() mymainmenu:toggle() end),
+	awful.button({}, mice.wheel.up, awful.tag.viewnext),
+	awful.button({}, mice.wheel.down, awful.tag.viewprev)))
 -- }}}
 
 -- {{{ Key bindings
@@ -331,9 +332,9 @@ for i = 1, 9 do
 			end))
 end
 
-clientbuttons = awful.util.table.join(awful.button({}, 1, function(c) client.focus = c; c:raise() end),
-	awful.button({ modkey }, 1, awful.mouse.client.move),
-	awful.button({ modkey }, 3, awful.mouse.client.resize))
+clientbuttons = awful.util.table.join(awful.button({}, mice.button.left, function(c) client.focus = c; c:raise() end),
+	awful.button({ modkey }, mice.button.left, awful.mouse.client.move),
+	awful.button({ modkey }, mice.button.right, awful.mouse.client.resize))
 
 -- Set keys
 root.keys(globalkeys)
@@ -398,12 +399,12 @@ client.connect_signal("manage", function(c, startup)
 	local titlebars_enabled = false
 	if titlebars_enabled and (c.type == "normal" or c.type == "dialog") then
 		-- buttons for the titlebar
-		local buttons = awful.util.table.join(awful.button({}, 1, function()
+		local buttons = awful.util.table.join(awful.button({}, mice.button.left, function()
 			client.focus = c
 			c:raise()
 			awful.mouse.client.move(c)
 		end),
-			awful.button({}, 3, function()
+			awful.button({}, mice.button.right, function()
 				client.focus = c
 				c:raise()
 				awful.mouse.client.resize(c)
